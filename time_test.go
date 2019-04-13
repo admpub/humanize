@@ -21,7 +21,7 @@ func TestHumanizer_TimeDiffNow(t *testing.T) {
 	}
 
 	for duration, expected := range cases {
-		humanized := humanizer.TimeDiffNow(time.Now().Add(duration), false)
+		humanized := humanizer.TimeDiffNow(time.Now().Add(duration), 0)
 		if humanized != expected {
 			t.Errorf("Expected '%s', got '%s'.", expected, humanized)
 		}
@@ -37,7 +37,7 @@ func TestHumanizer_TimeDiffNow_TZ(t *testing.T) {
 	loc, _ := time.LoadLocation("Asia/Shanghai")
 	date := time.Now().Add(time.Duration(5 * time.Minute)).In(loc)
 	// Make sure that TimeDiffNow is TZ agnostic.
-	humanized := humanizer.TimeDiffNow(date, false)
+	humanized := humanizer.TimeDiffNow(date, 0)
 	if humanized != "in 5 minutes" {
 		t.Errorf("Expected 'in 5 minutes', got '%s'.", humanized)
 	}
@@ -64,7 +64,7 @@ func TestHumanizer_TimeDiff_Imprecise(t *testing.T) {
 	}
 
 	for endDate, expected := range cases {
-		humanized := humanizer.TimeDiff(startDate, endDate, false)
+		humanized := humanizer.TimeDiff(startDate, endDate, 0)
 		if humanized != expected {
 			t.Errorf("Expected '%s', got '%s'.", expected, humanized)
 		}
@@ -88,7 +88,7 @@ func TestHumanizer_TimeDiff_Precise(t *testing.T) {
 	}
 
 	for endDate, expected := range cases {
-		humanized := humanizer.TimeDiff(startDate, endDate, true)
+		humanized := humanizer.TimeDiff(startDate, endDate, -1)
 		if humanized != expected {
 			t.Errorf("Expected '%s', got '%s'.", expected, humanized)
 		}

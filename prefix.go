@@ -1,7 +1,6 @@
 package humanize
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"sort"
@@ -98,16 +97,15 @@ func (humanizer *Humanizer) Prefix(value float64, decimals int, threshold int64,
 
 	if short {
 		return convertedValue + siPrefixes[i].short
-	} else {
-		return convertedValue + " " + siPrefixes[i].long
 	}
+	return convertedValue + " " + siPrefixes[i].long
 }
 
 // ParsePrefix will return a number as parsed from input string.
 func (humanizer *Humanizer) ParsePrefix(input string) (float64, error) {
 	matched := humanizer.metricInputRe.FindStringSubmatch(strings.TrimSpace(input))
 	if len(matched) != 4 {
-		return 0, errors.New(fmt.Sprintf("Cannot parse '%s'.", input))
+		return 0, fmt.Errorf("Cannot parse '%s'", input)
 	}
 
 	// 0 - full match, 1 - number, 2 - decimal, 3 - suffix
@@ -131,5 +129,5 @@ func (humanizer *Humanizer) ParsePrefix(input string) (float64, error) {
 	}
 
 	// No prefix was found at all.
-	return 0, errors.New(fmt.Sprintf("Can't match metric prefix for '%s'.", matched[3]))
+	return 0, fmt.Errorf("Can't match metric prefix for '%s'", matched[3])
 }

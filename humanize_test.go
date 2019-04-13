@@ -18,7 +18,12 @@ func TestNew_Wrong(t *testing.T) {
 	var humanizer *Humanizer
 	var err error
 	humanizer, err = New("xyz")
-	if humanizer != nil || err == nil {
-		t.Error("Humanizer creation succeeded where it should have failed.")
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected := `en`
+	language := humanizer.Language()
+	if expected != language {
+		t.Errorf(`Expected '%s', got '%s'.`, expected, language)
 	}
 }

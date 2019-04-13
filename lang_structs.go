@@ -3,42 +3,69 @@ package humanize
 // Language definition structures.
 
 // List all the existing language providers here.
-var languages = map[string]languageProvider{
-	"pl": lang_pl,
-	"en": lang_en,
+var languages = map[string]LanguageProvider{
+	"pl":    lang_pl,
+	"en":    lang_en,
+	"zh-CN": lang_zh_CN,
 }
 
-// languageProvider is a struct defining all the needed language elements.
-type languageProvider struct {
-	times times
+func Register(language string, provider LanguageProvider) {
+	languages[language] = provider
 }
 
-// Time related language elements.
-type times struct {
+func HasLanguage(language string) bool {
+	_, ok := languages[language]
+	return ok
+}
+
+func AllLanguages() map[string]LanguageProvider {
+	return languages
+}
+
+// LanguageProvider is a struct defining all the needed language elements.
+type LanguageProvider struct {
+	Times Times
+}
+
+var (
+	DefaultLanguage  = `en`
+	DefaultTimeUnits = TimeUnits{
+		"second": 1,
+		"minute": Minute,
+		"hour":   Hour,
+		"day":    Day,
+		"week":   Week,
+		"month":  Month,
+		"year":   Year,
+	}
+)
+
+// Times Time related language elements.
+type Times struct {
 	// Time ranges to humanize time.
-	ranges []timeRanges
+	Ranges []TimeRanges
 	// String for formatting time in the future.
-	future string
+	Future string
 	// String for formatting time in the past.
-	past string
+	Past string
 	// String to humanize now.
-	now string
+	Now string
 	// Remainder separator
-	remainderSep string
+	RemainderSep string
 	// Unit values for matching the input. Partial matches are ok.
-	units timeUnits
+	Units TimeUnits
 }
 
-// Time unit definitions for input parsing. Use partial matches.
-type timeUnits map[string]int64
+// TimeUnits Time unit definitions for input parsing. Use partial matches.
+type TimeUnits map[string]int64
 
-// Definition of time ranges to match against.
-type timeRanges struct {
-	upperLimit int64
-	divideBy   int64
-	ranges     []timeRange
+// TimeRanges Definition of time ranges to match against.
+type TimeRanges struct {
+	UpperLimit int64
+	DivideBy   int64
+	Ranges     []TimeRange
 }
-type timeRange struct {
-	upperLimit int64
-	format     string
+type TimeRange struct {
+	UpperLimit int64
+	Format     string
 }

@@ -2,8 +2,9 @@
 Human readable formatting and input parsing for Go. 
 
 ## Supported languages
-* English
-* Polish
+* English (en)
+* Polish (pl)
+* Simplified Chinese (zh-CN)
 
 ## Supported operations
 
@@ -25,11 +26,11 @@ firstDate := time.Date(2017, 3, 21, 12, 30, 15, 0, time.UTC)
 secondDate := time.Date(2017, 6, 21, 0, 0, 0, 0, time.UTC)
 
 // Approximate mode.
-fmt.Println(humanizer.TimeDiff(firstDate, secondDate, false))
+fmt.Println(humanizer.TimeDiff(firstDate, secondDate, 0))
 // Prints: in 3 months
 
 // Precise mode.
-fmt.Println(humanizer.TimeDiff(secondDate, firstDate, true))
+fmt.Println(humanizer.TimeDiff(secondDate, firstDate, -1))
 // Prints: 3 months, 1 day, 11 hours, 29 minutes and 45 seconds ago
 ```
 ### Metric prefixes

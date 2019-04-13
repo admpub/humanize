@@ -1,57 +1,47 @@
 package humanize
 
-var lang_pl = languageProvider{
-	times: times{
-		ranges: []timeRanges{
-			{Minute, 1, []timeRange{
+var lang_pl = LanguageProvider{
+	Times: Times{
+		Ranges: []TimeRanges{
+			{Minute, 1, []TimeRange{
 				{2, "1 sekundę"},
 				{5, "%d sekundy"},
 				{Minute, "%d sekund"},
 			}},
-			{Hour, Minute, []timeRange{
+			{Hour, Minute, []TimeRange{
 				{2 * Minute, "minutę"},
 				{5 * Minute, "%d minuty"},
 				{Hour, "%d minut"},
 			}},
-			{Day, Hour, []timeRange{
+			{Day, Hour, []TimeRange{
 				{2 * Hour, "1 godzinę"},
 				{5 * Hour, "%d godziny"},
 				{Day, "%d godzin"},
 			}},
-			{Week, Day, []timeRange{
+			{Week, Day, []TimeRange{
 				{2 * Day, "1 dzień"},
 				{Week, "%d dni"},
 			}},
-			{Month, Week, []timeRange{
+			{Month, Week, []TimeRange{
 				{2 * Week, "1 tydzień"},
 				{5 * Week, "%d tygodnie"},
 				{Month, "%d tygodni"},
 			}},
-			{Year, Month, []timeRange{
+			{Year, Month, []TimeRange{
 				{2 * Month, "1 miesiąc"},
 				{5 * Month, "%d miesiące"},
 				{Year, "%d miesięcy"},
 			}},
-			{LongTime, Year, []timeRange{
+			{LongTime, Year, []TimeRange{
 				{2 * Year, "1 rok"},
 				{5 * Year, "%d lata"},
 				{LongTime, "%d lat"},
 			}},
 		},
-		future:       "za %s",
-		past:         "%s temu",
-		now:          "teraz",
-		remainderSep: "i",
-		units: timeUnits{
-			"sekund": 1,
-			"minut":  Minute,
-			"godzin": Hour,
-			"dzie":   Day,
-			"dni":    Day,
-			"ty":     Week,
-			"miesi":  Month,
-			"rok":    Year,
-			"lat":    Year,
-		},
+		Future:       "za %s",
+		Past:         "%s temu",
+		Now:          "teraz",
+		RemainderSep: " i ",
+		Units:        DefaultTimeUnits,
 	},
 }

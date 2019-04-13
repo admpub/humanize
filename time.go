@@ -3,7 +3,6 @@ package humanize
 // Time values humanization functions.
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"sort"
@@ -27,8 +26,8 @@ const (
 // buildTimeInputRe will build a regular expression to match all possible time inputs.
 func (humanizer *Humanizer) buildTimeInputRe() {
 	// Get all possible time units.
-	units := make([]string, 0, len(humanizer.provider.times.units))
-	for unit := range humanizer.provider.times.units {
+	units := make([]string, 0, len(humanizer.provider.Times.Units))
+	for unit := range humanizer.provider.Times.Units {
 		units = append(units, unit)
 	}
 	// Regexp will match: number, optional coma or dot, optional second number, unit name
@@ -36,55 +35,54 @@ func (humanizer *Humanizer) buildTimeInputRe() {
 }
 
 // humanizeDuration will return a humanized form of time duration.
-func (humanizer *Humanizer) humanizeDuration(seconds int64, precise bool) string {
+func (humanizer *Humanizer) humanizeDuration(seconds int64, precise int) string {
 	if seconds < 1 {
 		panic("Cannot humanize durations < 1 sec.")
 	}
 	secondsLeft := seconds
 	humanized := []string{}
 
-	for secondsLeft > 0 {
+	for i := -1; secondsLeft > 0 && (precise < 0 || i < precise); i++ {
 		// Find the ranges closest but bigger then diff.
-		n := sort.Search(len(humanizer.provider.times.ranges), func(i int) bool {
-			return humanizer.provider.times.ranges[i].upperLimit > secondsLeft
+		n := sort.Search(len(humanizer.provider.Times.Ranges), func(i int) bool {
+			return humanizer.provider.Times.Ranges[i].UpperLimit > secondsLeft
 		})
 
 		// Within the ranges find the one matching our time best.
-		timeRanges := humanizer.provider.times.ranges[n]
-		k := sort.Search(len(timeRanges.ranges), func(i int) bool {
-			return timeRanges.ranges[i].upperLimit > secondsLeft
+		timeRanges := humanizer.provider.Times.Ranges[n]
+		k := sort.Search(len(timeRanges.Ranges), func(i int) bool {
+			return timeRanges.Ranges[i].UpperLimit > secondsLeft
 		})
-		timeRange := timeRanges.ranges[k]
-		actualTime := secondsLeft / timeRanges.divideBy // Integer division!
+		timeRange := timeRanges.Ranges[k]
+		actualTime := secondsLeft / timeRanges.DivideBy // Integer division!
 
 		// If range has a placeholder for a number, insert it.
-		if strings.Contains(timeRange.format, "%d") {
-			humanized = append(humanized, fmt.Sprintf(timeRange.format, actualTime))
+		if strings.Contains(timeRange.Format, "%d") {
+			humanized = append(humanized, fmt.Sprintf(timeRange.Format, actualTime))
 		} else {
-			humanized = append(humanized, timeRange.format)
+			humanized = append(humanized, timeRange.Format)
 		}
 
 		// Subtract the time span covered by this part.
-		secondsLeft -= actualTime * timeRanges.divideBy
-		if !precise { // We don't care about the reminder.
+		secondsLeft -= actualTime * timeRanges.DivideBy
+		if precise == 0 { // We don't care about the reminder.
 			secondsLeft = 0
 		}
 	}
 
 	if len(humanized) == 1 {
 		return humanized[0]
-	} else {
-		return fmt.Sprintf(
-			"%s %s %s",
-			strings.Join(humanized[:len(humanized)-1], ", "),
-			humanizer.provider.times.remainderSep,
-			humanized[len(humanized)-1],
-		)
 	}
+	return fmt.Sprintf(
+		"%s%s%s",
+		strings.Join(humanized[:len(humanized)-1], ", "),
+		humanizer.provider.Times.RemainderSep,
+		humanized[len(humanized)-1],
+	)
 }
 
 // TimeDiffNow is a convenience method returning humanized time from now till date.
-func (humanizer *Humanizer) TimeDiffNow(date time.Time, precise bool) string {
+func (humanizer *Humanizer) TimeDiffNow(date time.Time, precise int) string {
 	return humanizer.TimeDiff(time.Now(), date, precise)
 }
 
@@ -94,11 +92,11 @@ func (humanizer *Humanizer) TimeDiffNow(date time.Time, precise bool) string {
 //   precise=true  -> "2 months, 1 week and 3 days"
 //
 // TODO: in precise mode some ranges should be skipped, like weeks in the example above.
-func (humanizer *Humanizer) TimeDiff(startDate, endDate time.Time, precise bool) string {
+func (humanizer *Humanizer) TimeDiff(startDate, endDate time.Time, precise int) string {
 	diff := endDate.Unix() - startDate.Unix()
 
 	if diff == 0 {
-		return humanizer.provider.times.now
+		return humanizer.provider.Times.Now
 	}
 
 	// Don't bother with Math.Abs
@@ -111,17 +109,16 @@ func (humanizer *Humanizer) TimeDiff(startDate, endDate time.Time, precise bool)
 
 	// Past or future?
 	if diff > 0 {
-		return fmt.Sprintf(humanizer.provider.times.future, humanized)
-	} else {
-		return fmt.Sprintf(humanizer.provider.times.past, humanized)
+		return fmt.Sprintf(humanizer.provider.Times.Future, humanized)
 	}
+	return fmt.Sprintf(humanizer.provider.Times.Past, humanized)
 }
 
 // ParseDuration will return time duration as parsed from input string.
 func (humanizer *Humanizer) ParseDuration(input string) (time.Duration, error) {
 	allMatched := humanizer.timeInputRe.FindAllStringSubmatch(input, -1)
 	if len(allMatched) == 0 {
-		return time.Duration(0), errors.New(fmt.Sprintf("Cannot parse '%s'.", input))
+		return time.Duration(0), fmt.Errorf("Cannot parse '%s'", input)
 	}
 
 	totalDuration := time.Duration(0)
@@ -136,7 +133,7 @@ func (humanizer *Humanizer) ParseDuration(input string) (time.Duration, error) {
 			return time.Duration(0), err
 		}
 		// Get the value of the unit in seconds.
-		seconds, _ := humanizer.provider.times.units[matched[3]]
+		seconds, _ := humanizer.provider.Times.Units[matched[3]]
 		// Parser will simply sum up all the found durations.
 		totalDuration += time.Duration(int64(number * float64(seconds) * float64(time.Second)))
 	}

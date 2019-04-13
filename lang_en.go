@@ -1,49 +1,41 @@
 package humanize
 
-var lang_en = languageProvider{
-	times: times{
-		ranges: []timeRanges{
-			{Minute, 1, []timeRange{
+var lang_en = LanguageProvider{
+	Times: Times{
+		Ranges: []TimeRanges{
+			{Minute, 1, []TimeRange{
 				{2, "1 second"},
 				{60, "%d seconds"},
 			}},
-			{Hour, Minute, []timeRange{
+			{Hour, Minute, []TimeRange{
 				{2 * Minute, "1 minute"},
 				{Hour, "%d minutes"},
 			}},
-			{Day, Hour, []timeRange{
+			{Day, Hour, []TimeRange{
 				{2 * Hour, "1 hour"},
 				{Day, "%d hours"},
 			}},
-			{Week, Day, []timeRange{
+			{Week, Day, []TimeRange{
 				{2 * Day, "1 day"},
 				{Week, "%d days"},
 			}},
-			{Month, Week, []timeRange{
+			{Month, Week, []TimeRange{
 				{2 * Week, "1 week"},
 				{Month, "%d weeks"},
 			}},
-			{Year, Month, []timeRange{
+			{Year, Month, []TimeRange{
 				{2 * Month, "1 month"},
 				{Year, "%d months"},
 			}},
-			{LongTime, Year, []timeRange{
+			{LongTime, Year, []TimeRange{
 				{2 * Year, "1 year"},
 				{LongTime, "%d years"},
 			}},
 		},
-		future:       "in %s",
-		past:         "%s ago",
-		now:          "now",
-		remainderSep: "and",
-		units: timeUnits{
-			"second": 1,
-			"minute": Minute,
-			"hour":   Hour,
-			"day":    Day,
-			"week":   Week,
-			"month":  Month,
-			"year":   Year,
-		},
+		Future:       "in %s",
+		Past:         "%s ago",
+		Now:          "now",
+		RemainderSep: " and ",
+		Units:        DefaultTimeUnits,
 	},
 }
