@@ -16,6 +16,9 @@ type Humanizer struct {
 
 // New creates a new humanizer for a given language.
 func New(language string, defaults ...string) (*Humanizer, error) {
+	if humanizer := humanizers.Get(language); humanizer != nil {
+		return humanizer, nil
+	}
 	if provider, exists := languages[language]; exists {
 		humanizer := &Humanizer{
 			provider: provider,
@@ -23,6 +26,7 @@ func New(language string, defaults ...string) (*Humanizer, error) {
 		}
 		humanizer.buildTimeInputRe()
 		humanizer.buildMetricInputRe()
+		humanizers.Set(language, humanizer)
 		return humanizer, nil
 	}
 	if len(defaults) > 0 && len(defaults[0]) > 0 {
