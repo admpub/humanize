@@ -4,6 +4,7 @@ package humanize
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 // Humanizer is the main struct that provides the public methods.
@@ -16,6 +17,7 @@ type Humanizer struct {
 
 // New creates a new humanizer for a given language.
 func New(language string, defaults ...string) (*Humanizer, error) {
+	language = strings.ToLower(language)
 	if humanizer := humanizers.Get(language); humanizer != nil {
 		return humanizer, nil
 	}

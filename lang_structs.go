@@ -1,19 +1,23 @@
 package humanize
 
+import "strings"
+
 // Language definition structures.
 
 // List all the existing language providers here.
 var languages = map[string]LanguageProvider{
 	"pl":    lang_pl,
 	"en":    lang_en,
-	"zh-CN": lang_zh_CN,
+	"zh-cn": lang_zh_cn,
 }
 
 func Register(language string, provider LanguageProvider) {
+	language = strings.ToLower(language)
 	languages[language] = provider
 }
 
 func HasLanguage(language string) bool {
+	language = strings.ToLower(language)
 	_, ok := languages[language]
 	return ok
 }

@@ -1,6 +1,6 @@
 package humanize
 
-var lang_zh_CN = LanguageProvider{
+var lang_zh_cn = LanguageProvider{
 	Times: Times{
 		Ranges: []TimeRanges{
 			{Minute, 1, []TimeRange{
