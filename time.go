@@ -88,8 +88,8 @@ func (humanizer *Humanizer) TimeDiffNow(date time.Time, precise int) string {
 
 // TimeDiff will return the humanized time difference between the given dates.
 // Precise setting determines whether a rough approximation or exact description should be returned, e.g.:
-//   precise=false -> "3 months"
-//   precise=true  -> "2 months, 1 week and 3 days"
+//   precise=0 -> "3 months"
+//   precise=2  -> "2 months, 1 week and 3 days"
 //
 // TODO: in precise mode some ranges should be skipped, like weeks in the example above.
 func (humanizer *Humanizer) TimeDiff(startDate, endDate time.Time, precise int) string {
